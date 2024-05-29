@@ -5,12 +5,28 @@
 #include "piece.h"
 #include "utilities.h"
 
-void drawWindow(sf::RenderWindow& window){
-    
+void drawWindow(sf::RenderWindow& window, std::vector<std::vector<int>>& positions, std::vector<Piece>& pieces)
+{
     drawBoard(window);
-    std::vector<std::vector<int>> positions = initPositions(window);
-    std::vector<Piece> pieces = initPieces(positions);
     drawPieces(window, pieces);
+}
+
+void interactionLogic(sf::RenderWindow& window, std::vector<std::vector<int>>& positions, std::vector<Piece>& pieces)
+{
+    for(Piece piece : pieces)
+    {
+        sf::Vector2 mouse = window.mapPixelToCoords(static_cast<sf::Vector2i>(sf::Mouse::getPosition(window)));
+        if(piece.checkMouseCollision(window, mouse))
+        {
+            std::cout << "click" << std::endl;
+            if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+            {
+                piece.showMoves(window, positions);
+            }
+        }
+
+    }
+
 }
 
 int main()
@@ -23,8 +39,14 @@ int main()
 
     window.setFramerateLimit(60);
 
+    std::vector<std::vector<int>> positions = initPositions(window);
+    std::vector<Piece> pieces = initPieces(positions);
+
     while (window.isOpen())
     {
+        window.clear(sf::Color::Black);
+        interactionLogic(window, positions, pieces);
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -32,9 +54,8 @@ int main()
                 window.close();
             }
         }
-        window.clear(sf::Color::Black);
-        drawWindow(window);
 
+        drawWindow(window, positions, pieces);
         window.display();
     }
 
