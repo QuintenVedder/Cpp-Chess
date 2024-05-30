@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include <unordered_map> 
 #include "piece.h"
 #include "utilities.h"
 
@@ -13,20 +14,16 @@ void drawWindow(sf::RenderWindow& window, std::vector<std::vector<int>>& positio
 
 void interactionLogic(sf::RenderWindow& window, std::vector<std::vector<int>>& positions, std::vector<Piece>& pieces)
 {
-    for(Piece piece : pieces)
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) // Only check for collision when mouse button is pressed
     {
-        sf::Vector2 mouse = window.mapPixelToCoords(static_cast<sf::Vector2i>(sf::Mouse::getPosition(window)));
-        if(piece.checkMouseCollision(window, mouse))
+        for (Piece piece : pieces)
         {
-            std::cout << "click" << std::endl;
-            if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+            if (piece.checkMouseCollision(window))
             {
                 piece.showMoves(window, positions);
             }
         }
-
     }
-
 }
 
 int main()
@@ -45,6 +42,9 @@ int main()
     while (window.isOpen())
     {
         window.clear(sf::Color::Black);
+
+        drawWindow(window, positions, pieces);
+
         interactionLogic(window, positions, pieces);
 
         sf::Event event;
@@ -55,7 +55,6 @@ int main()
             }
         }
 
-        drawWindow(window, positions, pieces);
         window.display();
     }
 

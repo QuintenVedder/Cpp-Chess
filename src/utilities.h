@@ -34,83 +34,44 @@ std::vector<Piece> initPieces(const std::vector<std::vector<int>>& positions)
     std::vector<Piece> pieces;
 
     for (int j = 0; j < 8; j++)
-{
-    for (int i = 0; i < 8; i++)
     {
-        if(j == 0)
+        for (int i = 0; i < 8; i++)
         {
-            switch(i)
+            if(j == 0 || j == 1 || j == 6 || j == 7)
             {
-                case 0:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Rook));
-                break;
-                case 1:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Knight));
-                break;
-                case 2:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Bishop));
-                break;
-                case 3:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Queen));
-                break;
-                case 4:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::King));
-                break;
-                case 5:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Bishop));
-                break;
-                case 6:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Knight));
-                break;
-                case 7:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Rook));
-                break;
-                default:
-                break;
-            }
-        }
-        else if(j == 1)
-        {
-            pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Pawn));
-        }
-        else if(j == 6)
-        {
-            pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Pawn));
-        }
-        if(j == 7)
-        {
-            switch(i)
-            {
-                case 0:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Rook));
-                break;
-                case 1:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Knight));
-                break;
-                case 2:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Bishop));
-                break;
-                case 3:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Queen));
-                break;
-                case 4:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::King));
-                break;
-                case 5:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Bishop));
-                break;
-                case 6:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Knight));
-                break;
-                case 7:
-                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Rook));
-                break;
-                default:
-                break;
+                if(j == 0)
+                {
+                    switch(i)
+                    {
+                        case 0: case 7: pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Rook)); break;
+                        case 1: case 6: pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Knight)); break;
+                        case 2: case 5: pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Bishop)); break;
+                        case 3: pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Queen)); break;
+                        case 4: pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::King)); break;
+                    }
+                }
+                else if(j == 1)
+                {
+                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::Black, PieceType::Pawn));
+                }
+                else if(j == 6)
+                {
+                    pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Pawn));
+                }
+                else if(j == 7)
+                {
+                    switch(i)
+                    {
+                        case 0: case 7: pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Rook)); break;
+                        case 1: case 6: pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Knight)); break;
+                        case 2: case 5: pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Bishop)); break;
+                        case 3: pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::Queen)); break;
+                        case 4: pieces.push_back(Piece((j*8)+i, positions[(j*8)+i], PieceTeam::White, PieceType::King)); break;
+                    }
+                }
             }
         }
     }
-}
     return pieces;
 }
 void drawPieces(sf::RenderWindow& window, std::vector<Piece>& pieces)
