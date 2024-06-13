@@ -51,7 +51,22 @@ initReturn initVars(){
     r.pieces = pieces;
     return r;
 }
-void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArray, std::vector<Piece>& pieces, std::vector<std::vector<int>>& movesArray){
+
+bool Mouse2MoveRectCollision(sf::RenderWindow& window, sf::RectangleShape& moveRect){
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+    return moveRect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos));
+}
+
+void movePiece(std::vector<int>& clickedPiecePos, std::vector<Piece>& pieces, std::vector<int>& move){
+    for( Piece& piece : pieces){
+        if(piece.pos == clickedPiecePos){
+            piece.pos = move;
+            piece.calcMoves();
+        }
+    }
+}
+
+void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArray, std::vector<Piece>& pieces, std::vector<std::vector<int>>& movesArray, std::vector<int>& clickedPiecePos){
     sf::Vector2f size(200, 100);
 
     for (int row = 0; row < boardArray.size(); ++row) {
@@ -72,6 +87,11 @@ void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArr
                     moveRect.setPosition(x, y);
                     moveRect.setFillColor(sf::Color(255, 0, 0, 120));
                     window.draw(moveRect);
+                    if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+                        if(Mouse2MoveRectCollision(window, moveRect)){
+                            movePiece(clickedPiecePos, pieces, move);
+                        }
+                    }
                     //maak die shit clickable
                 }
             }
@@ -92,7 +112,7 @@ void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArr
                 }
             }
         }
+        // return movesArray;
     }
 }
-
 #endif //UTILITIES_H

@@ -4,12 +4,13 @@
 #include <SFML/Graphics.hpp>
 #include "utilities.h"
 
-void gameLoop(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArray, std::vector<Piece>& pieces, std::vector<std::vector<int>>& movesArray){
-    drawBoard(window, boardArray, pieces, movesArray);
+void gameLoop(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArray, std::vector<Piece>& pieces, std::vector<std::vector<int>>& movesArray, std::vector<int>& clickedPiecePos){
+    drawBoard(window, boardArray, pieces, movesArray, clickedPiecePos);
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
         for(Piece& piece : pieces){
             if(piece.mouse2PieceCollision(window)){
-                movesArray = piece.getMoves();
+                movesArray = piece.getMoves().moves;
+                clickedPiecePos = piece.getMoves().pos;
             }
         }
     }
@@ -27,12 +28,13 @@ int main(){
     std::vector<Piece> pieces = r.pieces;
 
     std::vector<std::vector<int>> movesArray;
+    std::vector<int> clickedPiecePos;
 
     while (window.isOpen())
     {
         window.clear(sf::Color::Black);
 
-        gameLoop(window, boardArray, pieces, movesArray);
+        gameLoop(window, boardArray, pieces, movesArray, clickedPiecePos);
 
         sf::Event event;
         while (window.pollEvent(event))
