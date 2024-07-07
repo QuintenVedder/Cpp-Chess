@@ -1,30 +1,41 @@
 #include <iostream>
 #include <vector>
-#include <string>
+// #include <string>
 #include <SFML/Graphics.hpp>
-#include "piece.h"
 #include "utilities.h"
 
-void drawWindow(sf::RenderWindow& window){
-    
-    drawBoard(window);
-    std::vector<std::vector<int>> positions = initPositions(window);
-    std::vector<Piece> pieces = initPieces(positions);
-    drawPieces(window, pieces);
+void gameLoop(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArray, std::vector<Piece>& pieces, std::vector<std::vector<int>>& movesArray, std::vector<int>& clickedPiecePos){
+    drawBoard(window, boardArray, pieces, movesArray, clickedPiecePos);
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        for(Piece& piece : pieces){
+            if(piece.mouse2PieceCollision(window)){
+                movesArray = piece.getMoves().moves;
+                clickedPiecePos = piece.getMoves().pos;
+            }
+        }
+    }
 }
 
-int main()
-{
+int main(){
     const int windowWidth = 800;
     const int windowHeight = 800;
 
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Chess");
     window.setSize(sf::Vector2u(windowWidth, windowHeight)); 
 
-    window.setFramerateLimit(60);
+    initReturn r = initVars();
+    std::vector<std::vector<int>> boardArray = r.boardArray;
+    std::vector<Piece> pieces = r.pieces;
+
+    std::vector<std::vector<int>> movesArray;
+    std::vector<int> clickedPiecePos;
 
     while (window.isOpen())
     {
+        window.clear(sf::Color::Black);
+
+        gameLoop(window, boardArray, pieces, movesArray, clickedPiecePos);
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -32,8 +43,6 @@ int main()
                 window.close();
             }
         }
-        window.clear(sf::Color::Black);
-        drawWindow(window);
 
         window.display();
     }
