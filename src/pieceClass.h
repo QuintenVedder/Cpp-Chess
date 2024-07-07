@@ -29,16 +29,54 @@ class Piece{
         void calcMoves(){
             moves.clear();
             if(role == "p"){
-                for(int i = 0; i < 2; ++i){
+                for(int i = 0; i <= 2; ++i){
                     team == "b" ? moves.push_back({pos[0]+i, pos[1]}) : moves.push_back({pos[0]-i, pos[1]});
                 }
             }else if(role == "r"){
-                for(int i = 0; i < 8; ++i){
+                for(int i = 0; i <= 7; ++i){
                     moves.push_back({i, pos[1]});
                     moves.push_back({pos[0], i});
                 }
             }else if(role == "b"){
-                for (int i = 1; i < 8; ++i) {
+                for (int i = 1; i <= 7; ++i) {
+                    if (pos[0] + i < 8 && pos[1] + i < 8) {
+                        moves.push_back({pos[0] + i, pos[1] + i});
+                    } if (pos[0] - i >= 0 && pos[1] + i < 8) {
+                        moves.push_back({pos[0] - i, pos[1] + i});
+                    } if (pos[0] + i < 8 && pos[1] - i >= 0) {
+                        moves.push_back({pos[0] + i, pos[1] - i});
+                    } if (pos[0] - i >= 0 && pos[1] - i >= 0) {
+                        moves.push_back({pos[0] - i, pos[1] - i});
+                    }
+                }
+            }else if(role == "kn"){
+                moves.push_back({pos[0] + 2, pos[1] + 1});
+                moves.push_back({pos[0] + 2, pos[1] - 1});
+                moves.push_back({pos[0] - 2, pos[1] + 1});
+                moves.push_back({pos[0] - 2, pos[1] - 1});
+
+                moves.push_back({pos[0] + 1, pos[1] + 2});
+                moves.push_back({pos[0] + 1, pos[1] - 2});
+                moves.push_back({pos[0] - 1, pos[1] + 2});
+                moves.push_back({pos[0] - 1, pos[1] - 2});
+            }else if(role == "k"){
+                moves.push_back({pos[0] + 1, pos[1] + 1});
+                moves.push_back({pos[0] + 1, pos[1] - 1});
+                moves.push_back({pos[0] - 1, pos[1] + 1});
+                moves.push_back({pos[0] - 1, pos[1] - 1});
+
+                moves.push_back({pos[0] + 1, pos[1]});
+                moves.push_back({pos[0] - 1, pos[1]});
+                moves.push_back({pos[0], pos[1] + 1});
+                moves.push_back({pos[0], pos[1] - 1});
+            }
+            else if(role == "q"){
+                for(int i = 0; i <= 7; ++i){
+                    moves.push_back({i, pos[1]});
+                    moves.push_back({pos[0], i});
+                }
+                
+                for (int i = 1; i <= 7; ++i) {
                     if (pos[0] + i < 8 && pos[1] + i < 8) {
                         moves.push_back({pos[0] + i, pos[1] + i});
                     } if (pos[0] - i >= 0 && pos[1] + i < 8) {
