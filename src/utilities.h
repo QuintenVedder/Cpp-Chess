@@ -57,17 +57,19 @@ bool Mouse2MoveRectCollision(sf::RenderWindow& window, sf::RectangleShape& moveR
     return moveRect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos));
 }
 
-void movePiece(std::vector<int>& clickedPiecePos, std::vector<Piece>& pieces, std::vector<int>& move){
+bool movePiece(std::vector<int>& clickedPiecePos, std::vector<Piece>& pieces, std::vector<int>& move){
     for( Piece& piece : pieces){
         if(piece.pos == clickedPiecePos){
             piece.pos = move;
             piece.calcMoves();
+            return true;
         }
     }
+    return false;
 }
 
 void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArray, std::vector<Piece>& pieces, std::vector<std::vector<int>>& movesArray, std::vector<int>& clickedPiecePos){
-    sf::Vector2f size(200, 100);
+    sf::Vector2f size(100, 100);
 
     for (int row = 0; row < boardArray.size(); ++row) {
             for (int col = 0; col < boardArray[row].size(); ++col) {
@@ -89,10 +91,11 @@ void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArr
                     window.draw(moveRect);
                     if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
                         if(Mouse2MoveRectCollision(window, moveRect)){
-                            movePiece(clickedPiecePos, pieces, move);
+                            if(movePiece(clickedPiecePos, pieces, move)){
+                                movesArray.clear();
+                            }
                         }
                     }
-                    //maak die shit clickable
                 }
             }
             for( Piece& piece : pieces){

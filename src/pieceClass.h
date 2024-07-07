@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "utilities.h"
+#include <algorithm>
 
 class Piece{
     private:
@@ -27,15 +29,28 @@ class Piece{
         void calcMoves(){
             moves.clear();
             if(role == "p"){
-                for(int i = 1; i < 3; ++i){
+                for(int i = 0; i < 2; ++i){
                     team == "b" ? moves.push_back({pos[0]+i, pos[1]}) : moves.push_back({pos[0]-i, pos[1]});
                 }
             }else if(role == "r"){
-                for(int i = 1; i < 3; ++i){
-                    team == "b" ? moves.push_back({pos[0]+i, pos[1]}) : moves.push_back({pos[0]-i, pos[1]});
+                for(int i = 0; i < 8; ++i){
+                    moves.push_back({i, pos[1]});
+                    moves.push_back({pos[0], i});
+                }
+            }else if(role == "b"){
+                for (int i = 1; i < 8; ++i) {
+                    if (pos[0] + i < 8 && pos[1] + i < 8) {
+                        moves.push_back({pos[0] + i, pos[1] + i});
+                    } if (pos[0] - i >= 0 && pos[1] + i < 8) {
+                        moves.push_back({pos[0] - i, pos[1] + i});
+                    } if (pos[0] + i < 8 && pos[1] - i >= 0) {
+                        moves.push_back({pos[0] + i, pos[1] - i});
+                    } if (pos[0] - i >= 0 && pos[1] - i >= 0) {
+                        moves.push_back({pos[0] - i, pos[1] - i});
+                    }
                 }
             }
-            //add other pieces
+            moves.erase(std::remove(moves.begin(), moves.end(), pos), moves.end());
         }
 
         void setHitboxFromTexture(sf::Texture& texture, float x, float y){
