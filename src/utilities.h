@@ -68,7 +68,7 @@ bool movePiece(std::vector<int>& clickedPiecePos, std::vector<Piece>& pieces, st
     return false;
 }
 
-void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArray, std::vector<Piece>& pieces, std::vector<std::vector<int>>& movesArray, std::vector<int>& clickedPiecePos){
+void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArray, std::vector<Piece>& pieces, std::vector<std::vector<int>>& movesArray, std::vector<int>& clickedPiecePos, bool& turn){
     sf::Vector2f size(100, 100);
 
     for (int row = 0; row < boardArray.size(); ++row) {
@@ -93,6 +93,7 @@ void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArr
                         if(Mouse2MoveRectCollision(window, moveRect)){
                             if(movePiece(clickedPiecePos, pieces, move)){
                                 movesArray.clear();
+                                turn = !turn;
                             }
                         }
                     }
@@ -115,7 +116,6 @@ void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArr
                 }
             }
         }
-        // return movesArray;
     }
 }
 #endif //UTILITIES_H
