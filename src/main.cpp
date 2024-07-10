@@ -3,18 +3,21 @@
 #include <SFML/Graphics.hpp>
 #include "utilities.h"
 
-void gameLoop(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArray, std::vector<Piece>& pieces, std::vector<std::vector<int>>& movesArray, std::vector<int>& clickedPiecePos, bool& turn){
-    drawBoard(window, boardArray, pieces, movesArray, clickedPiecePos, turn);
+void gameLoop(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArray, std::vector<Piece>& pieces, std::vector<std::vector<int>>& movesArray, std::vector<std::vector<int>>& hitsArray, std::vector<int>& clickedPiecePos, bool& turn){
+    drawBoard(window, boardArray, pieces, movesArray, hitsArray, clickedPiecePos, turn);
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
         for(Piece& piece : pieces){
+            piece.calcMoves(pieces);
             if(turn && piece.team == "w"){
                 if(piece.mouse2PieceCollision(window)){
                     movesArray = piece.getMoves().moves;
+                    hitsArray = piece.hits;
                     clickedPiecePos = piece.getMoves().pos;
                 }
             }else if(!turn && piece.team == "b"){
                 if(piece.mouse2PieceCollision(window)){
                     movesArray = piece.getMoves().moves;
+                    hitsArray = piece.hits;
                     clickedPiecePos = piece.getMoves().pos;
                 }
             }
@@ -34,15 +37,16 @@ int main(){
     std::vector<Piece> pieces = r.pieces;
 
     std::vector<std::vector<int>> movesArray;
+    std::vector<std::vector<int>> hitsArray;
     std::vector<int> clickedPiecePos;
 
-    bool turn = false;
+    bool turn = true;
 
     while (window.isOpen())
     {
         window.clear(sf::Color::Black);
 
-        gameLoop(window, boardArray, pieces, movesArray, clickedPiecePos, turn);
+        gameLoop(window, boardArray, pieces, movesArray, hitsArray, clickedPiecePos, turn);
 
         sf::Event event;
         while (window.pollEvent(event))
