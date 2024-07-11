@@ -98,7 +98,7 @@ void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArr
             float x = col*100;
             float y = row*100;
             rect.setPosition(x, y);
-            rect.setFillColor(boardArray[row][col] == 1? sf::Color(255, 253, 208) : sf::Color(48, 25, 52));
+            rect.setFillColor(boardArray[row][col] == 1? sf::Color(255, 255, 255) : sf::Color(0, 0, 50));
             window.draw(rect);
             for(std::vector<int>& move : movesArray){
                 if(move == std::vector<int>{row, col}){
@@ -151,6 +151,43 @@ void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArr
                     window.draw(sprite);
                 }
             }
+        }
+    }
+}
+void winCheck(sf::RenderWindow& window, std::vector<Piece>& pieces){
+    for(Piece& piece : pieces){
+        if(piece.captured && piece.role == "k"){
+            sf::RectangleShape blackscreen;
+            blackscreen.setSize({800, 800});
+            blackscreen.setPosition(0,0);
+            blackscreen.setFillColor(sf::Color(0, 0, 0, 150));
+            window.draw(blackscreen);
+
+            sf::Texture texture;
+            std::string team;
+            piece.team == "b" ? team = "w" : team = "b";
+            if(!texture.loadFromFile("assets/" + team  + "p.png")){
+                std::cerr<< "was not able to load image -> " + piece.achronym + ".png"<<std::endl;
+            }
+
+            sf::Sprite sprite;
+            sprite.setTexture(texture);
+            sprite.setPosition(sf::Vector2f(350, 350));
+            window.draw(sprite);
+
+            sf::Font font;
+            if (!font.loadFromFile("assets/arial.ttf")) {
+                std::cerr<< "was not able to load font -> arial.ttf"<<std::endl;
+            }
+            sf::Text text;
+            text.setFont(font);
+            text.setPosition(sf::Vector2f(350, 450));
+            std::string teamLong;
+            team == "w" ? teamLong = "White" : teamLong = "Black";
+            text.setString(teamLong + " Won!");
+            text.setCharacterSize(24);
+            text.setFillColor(sf::Color::White);
+            window.draw(text);
         }
     }
 }

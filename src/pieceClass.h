@@ -13,21 +13,14 @@ class Piece{
         sf::FloatRect hitbox;
         std::vector<std::vector<int>> moves;
 
-        bool checkEmptyMove(std::vector<int>& move, std::vector<Piece>& pieces){
+        bool checkEmptyMove(std::vector<int>& move, std::vector<Piece>& pieces, bool canHit = true){
             for(Piece& piece : pieces){
                 if(piece.pos == move){
                     if(piece.team != team){
-                        hits.push_back(move);
+                        if(canHit){
+                            hits.push_back(move);
+                        }
                     }
-                    // std::cout << "Piece: " << piece.achronym << ", Piece Position: ";
-                    // for (int val : piece.pos) {
-                    //     std::cout << val << " ";
-                    // }
-                    // std::cout << ", Move: ";
-                    // for (int val : move) {
-                    //     std::cout << val << " ";
-                    // }
-                    // std::cout << std::endl;
                     return false;
                 }
             }
@@ -52,20 +45,35 @@ class Piece{
             hits.clear();
             std::vector<int> move;
             if(role == "p"){
-                // pawns hit different then they move!!!!!
-                // pawns cn only move 2 tiles in their first move
-                for(int i = 1; i <= 2; ++i){
+                int pawnMove = 2;
+                if(team == "b"){
+                    pos[0] == 1 ? pawnMove = 2 : pawnMove = 1; 
+                } else if (team == "w") {
+                    pos[0] == 6 ? pawnMove = 2 : pawnMove = 1; 
+                }
+                for(int i = 1; i <= pawnMove; ++i){
                     if (team == "b") {
                         move = {pos[0] + i, pos[1]};
                     } else if (team == "w") {
                         move = {pos[0] - i, pos[1]};
                     }
 
-                    if (checkEmptyMove(move, pieces)) {
+                    if (checkEmptyMove(move, pieces, false)) {
                         moves.push_back(move);
                     } else {
                         break;
                     }
+                }
+                if(team == "b"){
+                    move = {pos[0] + 1 , pos[1] + 1};
+                    checkEmptyMove(move, pieces);
+                    move = {pos[0] + 1 , pos[1] - 1};
+                    checkEmptyMove(move, pieces);
+                } else if (team == "w") {
+                    move = {pos[0] - 1 , pos[1] - 1};
+                    checkEmptyMove(move, pieces);
+                    move = {pos[0] - 1 , pos[1] + 1};
+                    checkEmptyMove(move, pieces);
                 }
             }else if(role == "r"){
                 for(int i = 1; i <= 7; ++i){
@@ -134,34 +142,37 @@ class Piece{
                     }
                 }
             }else if(role == "kn"){
-                moves.push_back({pos[0] + 2, pos[1] + 1});
-                moves.push_back({pos[0] + 2, pos[1] - 1});
-                moves.push_back({pos[0] - 2, pos[1] + 1});
-                moves.push_back({pos[0] - 2, pos[1] - 1});
+                std::vector<std::vector<int>> tmpMoves;
+                tmpMoves.push_back({pos[0] + 2, pos[1] + 1});
+                tmpMoves.push_back({pos[0] + 2, pos[1] - 1});
+                tmpMoves.push_back({pos[0] - 2, pos[1] + 1});
+                tmpMoves.push_back({pos[0] - 2, pos[1] - 1});
 
-                moves.push_back({pos[0] + 1, pos[1] + 2});
-                moves.push_back({pos[0] + 1, pos[1] - 2});
-                moves.push_back({pos[0] - 1, pos[1] + 2});
-                moves.push_back({pos[0] - 1, pos[1] - 2});
+                tmpMoves.push_back({pos[0] + 1, pos[1] + 2});
+                tmpMoves.push_back({pos[0] + 1, pos[1] - 2});
+                tmpMoves.push_back({pos[0] - 1, pos[1] + 2});
+                tmpMoves.push_back({pos[0] - 1, pos[1] - 2});
 
-                for(std::vector<int>& move : moves){
-                    if (!checkEmptyMove(move, pieces)) {
-                        moves.erase(std::remove(moves.begin(), moves.end(), move), moves.end());
+                for(std::vector<int>& tmpMove : tmpMoves){
+                    if (checkEmptyMove(tmpMove, pieces)) {
+                        moves.push_back(tmpMove);
                     }
                 }
             }else if(role == "k"){
-                moves.push_back({pos[0] + 1, pos[1] + 1});
-                moves.push_back({pos[0] + 1, pos[1] - 1});
-                moves.push_back({pos[0] - 1, pos[1] + 1});
-                moves.push_back({pos[0] - 1, pos[1] - 1});
+                std::vector<std::vector<int>> tmpMoves;
+                tmpMoves.push_back({pos[0] + 1, pos[1] + 1});
+                tmpMoves.push_back({pos[0] + 1, pos[1] - 1});
+                tmpMoves.push_back({pos[0] - 1, pos[1] + 1});
+                tmpMoves.push_back({pos[0] - 1, pos[1] - 1});
 
-                moves.push_back({pos[0] + 1, pos[1]});
-                moves.push_back({pos[0] - 1, pos[1]});
-                moves.push_back({pos[0], pos[1] + 1});
-                moves.push_back({pos[0], pos[1] - 1});
-                for(std::vector<int>& move : moves){
-                    if (!checkEmptyMove(move, pieces)) {
-                        moves.erase(std::remove(moves.begin(), moves.end(), move), moves.end());
+                tmpMoves.push_back({pos[0] + 1, pos[1]});
+                tmpMoves.push_back({pos[0] - 1, pos[1]});
+                tmpMoves.push_back({pos[0], pos[1] + 1});
+                tmpMoves.push_back({pos[0], pos[1] - 1});
+
+                for(std::vector<int>& tmpMove : tmpMoves){
+                    if (checkEmptyMove(tmpMove, pieces)) {
+                        moves.push_back(tmpMove);
                     }
                 }
             }

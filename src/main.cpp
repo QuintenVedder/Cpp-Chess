@@ -23,6 +23,7 @@ void gameLoop(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArra
             }
         }
     }
+    winCheck(window, pieces);
 }
 
 int main(){
