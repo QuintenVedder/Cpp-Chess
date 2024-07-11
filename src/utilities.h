@@ -46,6 +46,10 @@ initReturn initVars(){
     pieces.emplace_back(std::vector<int>{7, 6}, "wkn");
     pieces.emplace_back(std::vector<int>{7, 7}, "wr");
 
+    for(Piece& piece : pieces){
+        piece.calcMoves(pieces);
+    }
+
     initReturn r;
     r.boardArray = boardArray;
     r.pieces = pieces;
@@ -61,14 +65,28 @@ bool movePiece(std::vector<int>& clickedPiecePos, std::vector<Piece>& pieces, st
     for( Piece& piece : pieces){
         if(piece.pos == clickedPiecePos){
             piece.pos = move;
-            piece.calcMoves();
+            piece.calcMoves(pieces);
             return true;
         }
     }
     return false;
 }
 
-void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArray, std::vector<Piece>& pieces, std::vector<std::vector<int>>& movesArray, std::vector<int>& clickedPiecePos){
+void hitPiece(std::vector<int>& clickedPiecePos, std::vector<Piece>& pieces, std::vector<int>& hit){
+    for( Piece& piece : pieces){
+        if(piece.pos == hit){
+            piece.captured = true;
+            piece.pos = {-10, -10};
+        }
+    }for( Piece& piece : pieces){
+        if(piece.pos == clickedPiecePos){
+            piece.pos = hit;
+            piece.calcMoves(pieces);
+        }
+    }
+}
+
+void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArray, std::vector<Piece>& pieces, std::vector<std::vector<int>>& movesArray, std::vector<std::vector<int>>& hitsArray, std::vector<int>& clickedPiecePos, bool& turn){
     sf::Vector2f size(100, 100);
 
     for (int row = 0; row < boardArray.size(); ++row) {
@@ -80,20 +98,39 @@ void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArr
             float x = col*100;
             float y = row*100;
             rect.setPosition(x, y);
-            rect.setFillColor(boardArray[row][col] == 1? sf::Color(255, 253, 208) : sf::Color(48, 25, 52));
+            rect.setFillColor(boardArray[row][col] == 1? sf::Color(255, 255, 255) : sf::Color(0, 0, 50));
             window.draw(rect);
             for(std::vector<int>& move : movesArray){
                 if(move == std::vector<int>{row, col}){
                     sf::RectangleShape moveRect;
                     moveRect.setSize(size);
                     moveRect.setPosition(x, y);
-                    moveRect.setFillColor(sf::Color(255, 0, 0, 120));
+                    moveRect.setFillColor(sf::Color(0, 255, 100, 75));
                     window.draw(moveRect);
                     if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
                         if(Mouse2MoveRectCollision(window, moveRect)){
                             if(movePiece(clickedPiecePos, pieces, move)){
                                 movesArray.clear();
+                                hitsArray.clear();
+                                turn = !turn;
                             }
+                        }
+                    }
+                }
+            }
+            for(std::vector<int>& hit : hitsArray){
+                if(hit == std::vector<int>{row, col}){
+                    sf::RectangleShape hitRect;
+                    hitRect.setSize(size);
+                    hitRect.setPosition(x, y);
+                    hitRect.setFillColor(sf::Color(255, 0, 0, 150));
+                    window.draw(hitRect);
+                    if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+                        if(Mouse2MoveRectCollision(window, hitRect)){
+                            hitPiece(clickedPiecePos, pieces, hit);
+                            movesArray.clear();
+                            hitsArray.clear();
+                            turn = !turn;
                         }
                     }
                 }
@@ -115,7 +152,43 @@ void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArr
                 }
             }
         }
-        // return movesArray;
+    }
+}
+void winCheck(sf::RenderWindow& window, std::vector<Piece>& pieces){
+    for(Piece& piece : pieces){
+        if(piece.captured && piece.role == "k"){
+            sf::RectangleShape blackscreen;
+            blackscreen.setSize({800, 800});
+            blackscreen.setPosition(0,0);
+            blackscreen.setFillColor(sf::Color(0, 0, 0, 150));
+            window.draw(blackscreen);
+
+            sf::Texture texture;
+            std::string team;
+            piece.team == "b" ? team = "w" : team = "b";
+            if(!texture.loadFromFile("assets/" + team  + "p.png")){
+                std::cerr<< "was not able to load image -> " + piece.achronym + ".png"<<std::endl;
+            }
+
+            sf::Sprite sprite;
+            sprite.setTexture(texture);
+            sprite.setPosition(sf::Vector2f(350, 350));
+            window.draw(sprite);
+
+            sf::Font font;
+            if (!font.loadFromFile("assets/arial.ttf")) {
+                std::cerr<< "was not able to load font -> arial.ttf"<<std::endl;
+            }
+            sf::Text text;
+            text.setFont(font);
+            text.setPosition(sf::Vector2f(350, 450));
+            std::string teamLong;
+            team == "w" ? teamLong = "White" : teamLong = "Black";
+            text.setString(teamLong + " Won!");
+            text.setCharacterSize(24);
+            text.setFillColor(sf::Color::White);
+            window.draw(text);
+        }
     }
 }
 #endif //UTILITIES_H

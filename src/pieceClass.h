@@ -12,79 +12,234 @@ class Piece{
     private:
         sf::FloatRect hitbox;
         std::vector<std::vector<int>> moves;
+
+        bool checkEmptyMove(std::vector<int>& move, std::vector<Piece>& pieces, bool canHit = true){
+            for(Piece& piece : pieces){
+                if(piece.pos == move){
+                    if(piece.team != team){
+                        if(canHit){
+                            hits.push_back(move);
+                        }
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }
     
     public:
         std::string role;
         std::string team;
         std::vector<int> pos;
         std::string achronym;
+        std::vector<std::vector<int>> hits;
+        bool captured = false;
 
         Piece(const std::vector<int>& pos, const std::string& achronym):pos(pos), achronym(achronym){
             team = achronym.substr(0, 1);
             role = achronym.substr(1, achronym.length()-1);
-
-            calcMoves();
         }
 
-        void calcMoves(){
+        void calcMoves(std::vector<Piece>& pieces){
             moves.clear();
+            hits.clear();
+            std::vector<int> move;
             if(role == "p"){
-                for(int i = 0; i <= 2; ++i){
-                    team == "b" ? moves.push_back({pos[0]+i, pos[1]}) : moves.push_back({pos[0]-i, pos[1]});
+                int pawnMove = 2;
+                if(team == "b"){
+                    pos[0] == 1 ? pawnMove = 2 : pawnMove = 1; 
+                } else if (team == "w") {
+                    pos[0] == 6 ? pawnMove = 2 : pawnMove = 1; 
+                }
+                for(int i = 1; i <= pawnMove; ++i){
+                    if (team == "b") {
+                        move = {pos[0] + i, pos[1]};
+                    } else if (team == "w") {
+                        move = {pos[0] - i, pos[1]};
+                    }
+
+                    if (checkEmptyMove(move, pieces, false)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                if(team == "b"){
+                    move = {pos[0] + 1 , pos[1] + 1};
+                    checkEmptyMove(move, pieces);
+                    move = {pos[0] + 1 , pos[1] - 1};
+                    checkEmptyMove(move, pieces);
+                } else if (team == "w") {
+                    move = {pos[0] - 1 , pos[1] - 1};
+                    checkEmptyMove(move, pieces);
+                    move = {pos[0] - 1 , pos[1] + 1};
+                    checkEmptyMove(move, pieces);
                 }
             }else if(role == "r"){
-                for(int i = 0; i <= 7; ++i){
-                    moves.push_back({i, pos[1]});
-                    moves.push_back({pos[0], i});
+                for(int i = 1; i <= 7; ++i){
+                    move = {pos[0]+i, pos[1]};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                for(int i = 1; i <= 7; ++i){
+                    move = {pos[0], pos[1]+i};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                for(int i = 1; i <= 7; ++i){
+                    move = {pos[0]-i, pos[1]};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                for(int i = 1; i <= 7; ++i){
+                    move = {pos[0], pos[1]-i};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
                 }
             }else if(role == "b"){
                 for (int i = 1; i <= 7; ++i) {
-                    if (pos[0] + i < 8 && pos[1] + i < 8) {
-                        moves.push_back({pos[0] + i, pos[1] + i});
-                    } if (pos[0] - i >= 0 && pos[1] + i < 8) {
-                        moves.push_back({pos[0] - i, pos[1] + i});
-                    } if (pos[0] + i < 8 && pos[1] - i >= 0) {
-                        moves.push_back({pos[0] + i, pos[1] - i});
-                    } if (pos[0] - i >= 0 && pos[1] - i >= 0) {
-                        moves.push_back({pos[0] - i, pos[1] - i});
+                    move = {pos[0] + i, pos[1] + i};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                for (int i = 1; i <= 7; ++i) {
+                    move = {pos[0] - i, pos[1] + i};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                for (int i = 1; i <= 7; ++i) {
+                    move = {pos[0] + i, pos[1] - i};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                for (int i = 1; i <= 7; ++i) {
+                    move = {pos[0] - i, pos[1] - i};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
                     }
                 }
             }else if(role == "kn"){
-                moves.push_back({pos[0] + 2, pos[1] + 1});
-                moves.push_back({pos[0] + 2, pos[1] - 1});
-                moves.push_back({pos[0] - 2, pos[1] + 1});
-                moves.push_back({pos[0] - 2, pos[1] - 1});
+                std::vector<std::vector<int>> tmpMoves;
+                tmpMoves.push_back({pos[0] + 2, pos[1] + 1});
+                tmpMoves.push_back({pos[0] + 2, pos[1] - 1});
+                tmpMoves.push_back({pos[0] - 2, pos[1] + 1});
+                tmpMoves.push_back({pos[0] - 2, pos[1] - 1});
 
-                moves.push_back({pos[0] + 1, pos[1] + 2});
-                moves.push_back({pos[0] + 1, pos[1] - 2});
-                moves.push_back({pos[0] - 1, pos[1] + 2});
-                moves.push_back({pos[0] - 1, pos[1] - 2});
+                tmpMoves.push_back({pos[0] + 1, pos[1] + 2});
+                tmpMoves.push_back({pos[0] + 1, pos[1] - 2});
+                tmpMoves.push_back({pos[0] - 1, pos[1] + 2});
+                tmpMoves.push_back({pos[0] - 1, pos[1] - 2});
+
+                for(std::vector<int>& tmpMove : tmpMoves){
+                    if (checkEmptyMove(tmpMove, pieces)) {
+                        moves.push_back(tmpMove);
+                    }
+                }
             }else if(role == "k"){
-                moves.push_back({pos[0] + 1, pos[1] + 1});
-                moves.push_back({pos[0] + 1, pos[1] - 1});
-                moves.push_back({pos[0] - 1, pos[1] + 1});
-                moves.push_back({pos[0] - 1, pos[1] - 1});
+                std::vector<std::vector<int>> tmpMoves;
+                tmpMoves.push_back({pos[0] + 1, pos[1] + 1});
+                tmpMoves.push_back({pos[0] + 1, pos[1] - 1});
+                tmpMoves.push_back({pos[0] - 1, pos[1] + 1});
+                tmpMoves.push_back({pos[0] - 1, pos[1] - 1});
 
-                moves.push_back({pos[0] + 1, pos[1]});
-                moves.push_back({pos[0] - 1, pos[1]});
-                moves.push_back({pos[0], pos[1] + 1});
-                moves.push_back({pos[0], pos[1] - 1});
+                tmpMoves.push_back({pos[0] + 1, pos[1]});
+                tmpMoves.push_back({pos[0] - 1, pos[1]});
+                tmpMoves.push_back({pos[0], pos[1] + 1});
+                tmpMoves.push_back({pos[0], pos[1] - 1});
+
+                for(std::vector<int>& tmpMove : tmpMoves){
+                    if (checkEmptyMove(tmpMove, pieces)) {
+                        moves.push_back(tmpMove);
+                    }
+                }
             }
             else if(role == "q"){
-                for(int i = 0; i <= 7; ++i){
-                    moves.push_back({i, pos[1]});
-                    moves.push_back({pos[0], i});
+                for(int i = 1; i <= 7; ++i){
+                    move = {pos[0]+i, pos[1]};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                for(int i = 1; i <= 7; ++i){
+                    move = {pos[0], pos[1]+i};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                for(int i = 1; i <= 7; ++i){
+                    move = {pos[0]-i, pos[1]};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                for(int i = 1; i <= 7; ++i){
+                    move = {pos[0], pos[1]-i};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
                 }
                 
                 for (int i = 1; i <= 7; ++i) {
-                    if (pos[0] + i < 8 && pos[1] + i < 8) {
-                        moves.push_back({pos[0] + i, pos[1] + i});
-                    } if (pos[0] - i >= 0 && pos[1] + i < 8) {
-                        moves.push_back({pos[0] - i, pos[1] + i});
-                    } if (pos[0] + i < 8 && pos[1] - i >= 0) {
-                        moves.push_back({pos[0] + i, pos[1] - i});
-                    } if (pos[0] - i >= 0 && pos[1] - i >= 0) {
-                        moves.push_back({pos[0] - i, pos[1] - i});
+                    move = {pos[0] + i, pos[1] + i};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                for (int i = 1; i <= 7; ++i) {
+                    move = {pos[0] - i, pos[1] + i};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                for (int i = 1; i <= 7; ++i) {
+                    move = {pos[0] + i, pos[1] - i};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
+                    }
+                }
+                for (int i = 1; i <= 7; ++i) {
+                    move = {pos[0] - i, pos[1] - i};
+                    if (checkEmptyMove(move, pieces)) {
+                        moves.push_back(move);
+                    } else {
+                        break;
                     }
                 }
             }
@@ -113,5 +268,4 @@ class Piece{
             return r;
         }
 };
-
 #endif //PIECECLASS_H
