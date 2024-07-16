@@ -3,14 +3,12 @@ CXX = g++
 CXX_WIN = x86_64-w64-mingw32-g++
 
 # Compiler flags
-CXXFLAGS = -std=c++17
+CXXFLAGS = -std=c++17 -static-libstdc++
 
 # SFML Paths
 SFML_INC_LINUX = /usr/include
 SFML_LIB_LINUX = /usr/lib
 
-SFML_INC_WIN = "/path/to/sfml"/include
-SFML_LIB_WIN = "/path/to/sfml"/lib
 
 # SFML Libraries
 SFML_LIBS = -lsfml-graphics -lsfml-system -lsfml-window
