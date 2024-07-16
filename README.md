@@ -2,6 +2,8 @@
 chess made with C++ and sfml
 ![Screenshot from 2024-07-16 17-11-06](https://github.com/user-attachments/assets/bc3b9ffb-0020-42cc-aa64-2a214d9df631)
 
+check out https://www.sfml-dev.org/ if you are interested in sfml
+
 some of the assets used are created by WildlifeStudios and are available here:
 https://wildlifestudios.itch.io/chess-set-pixel-art
 
