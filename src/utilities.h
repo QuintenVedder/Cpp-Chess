@@ -138,7 +138,7 @@ void drawBoard(sf::RenderWindow& window, std::vector<std::vector<int>>& boardArr
             for( Piece& piece : pieces){
                 if(piece.pos == std::vector<int>{row, col}){
                     sf::Texture texture;
-                    if(!texture.loadFromFile("assets/" + piece.achronym + ".png")){
+                    if(!texture.loadFromFile("../assets/" + piece.achronym + ".png")){
                         std::cerr<< "was not able to load image -> " + piece.achronym + ".png"<<std::endl;
                     }
 

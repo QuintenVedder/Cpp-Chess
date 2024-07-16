@@ -9,16 +9,18 @@ CXXFLAGS = -std=c++17 -static-libstdc++
 SFML_INC_LINUX = /usr/include
 SFML_LIB_LINUX = /usr/lib
 
+SFML_INC_WIN = "/path/to/sfml"/include
+SFML_LIB_WIN = "/path/to/sfml"/lib
 
 # SFML Libraries
 SFML_LIBS = -lsfml-graphics -lsfml-system -lsfml-window
 
 # Source files
-SRCS = main.cpp
+SRCS = ../src/main.cpp
 
 # Target executables
-TARGET_LINUX = chess-linux-mac
-TARGET_WIN = chess-windows.exe
+TARGET_LINUX = ../chess-linux-mac
+TARGET_WIN = ../chess-windows.exe
 
 # Default target
 all: $(TARGET_LINUX) $(TARGET_WIN)
