@@ -22,7 +22,7 @@ the assets/ folder contains images for every chesspiece and a font used to displ
 
 # Compile yourself
 if you have any interest in compiling this game yourself there is a makefile in build/ take a look there.
-i used linux for compiling so you might need to chnage some commands here and there if your using windows or macOs.
+i used linux for compiling so you might need to change some commands here and there if your using windows or macOs.
 
 in the makefile itself there are these two variables:
 
